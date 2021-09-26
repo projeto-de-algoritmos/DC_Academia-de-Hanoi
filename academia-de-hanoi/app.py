@@ -1,17 +1,17 @@
-import math
-import random
-
 import pyxel
 
 SCREEN_WIDTH = 256
 SCREEN_HEIGHT = 256
 
-BUBBLE_MAX_SPEED = 1.8
-BUBBLE_INITIAL_COUNT = 50
-BUBBLE_EXPLODE_COUNT = 11
+DISC_HEIGHT = 7
+TOWER_HEIGHT = 50
 
-def click_col(mx, my, x, y, w, h):
-    if (x+w > mx > x) and (y+h > my > y):
+def col_mouse_disc(mx, my, x, y, w):
+    if (x+w > mx > x) and (y+DISC_HEIGHT > my > y):
+        return True
+
+def col_tower_disc(tx, dx, dy, dw):
+    if (dx+dw > tx > dx-dw) and (dy>SCREEN_HEIGHT-TOWER_HEIGHT-10):
         return True
 
 class Vec:
@@ -19,51 +19,71 @@ class Vec:
         self.x = x
         self.y = y
 
-# class Tower:
-#     def __init__()
+class Tower:
+    def __init__(self, x, y, h):
+        self.discs = []
+        self.pos = Vec(x, y)
+        self.height = h
+
+    def update(self):
+        ...
+
+    def draw(self):
+        pyxel.rect(self.pos.x-1, self.pos.y-self.height, 3, self.height, 7)
+        pyxel.rect(self.pos.x-10, self.pos.y, 21, 3, 7)
+
+     
 
 class Disc:
     
     def __init__(self, x, y, w, color):
         self.pos = Vec(x, y)
+        self.last_pos = Vec(x, y)
         self.weight = w
         self.color = color
         self.dragging = False
 
     def update(self):
 
+        col_flag = 0
         if pyxel.btn(pyxel.MOUSE_LEFT_BUTTON):
-            if click_col(pyxel.mouse_x, pyxel.mouse_y, self.pos.x-self.weight-1, self.pos.y-3, self.weight*2+1, 7):
-                self.dragging = True
+            if col_mouse_disc(pyxel.mouse_x, pyxel.mouse_y, self.pos.x-self.weight-4, self.pos.y-3, self.weight*2+8):
+                if not self.dragging:
+                    self.dragging = True
+                    self.last_pos.x = self.pos.x
+                    self.last_pos.y = self.pos.y
         else:
-            self.dragging = False
-        
-        # if pyxel.btnr(pyxel.MOUSE_LEFT_BUTTON):
+            if self.dragging:
+                self.dragging = False
+                col_flag = 1 
+
+
         
         if self.dragging:
             self.pos.x = pyxel.mouse_x
             self.pos.y = pyxel.mouse_y
-            return True
+
+        return col_flag
 
     def draw(self):
-        pyxel.circ(self.pos.x-self.weight, self.pos.y, 3, self.color)
-        pyxel.circ(self.pos.x+self.weight, self.pos.y, 3, self.color)
-        pyxel.line(self.pos.x+self.weight, self.pos.y, self.pos.x-self.weight, self.pos.y, self.color)
-        pyxel.rect(self.pos.x-self.weight, self.pos.y-3, self.weight*2, 7, self.color)
+        pyxel.circ(self.pos.x-self.weight, self.pos.y, (DISC_HEIGHT/2), self.color)
+        pyxel.circ(self.pos.x+self.weight, self.pos.y, (DISC_HEIGHT/2), self.color)
+        pyxel.rect(self.pos.x-self.weight, self.pos.y-(DISC_HEIGHT/2)+1, self.weight*2, DISC_HEIGHT, self.color)
 
 class App:
     def __init__(self):
         pyxel.init(SCREEN_WIDTH, SCREEN_HEIGHT, caption="Academia de Hanoi")
         pyxel.mouse(True)
 
-        self.discs = [] 
+        self.towers = [] 
+        self.towers.append(Tower(SCREEN_WIDTH/6, SCREEN_HEIGHT-5, TOWER_HEIGHT))
+        self.towers.append(Tower((SCREEN_WIDTH/2), SCREEN_HEIGHT-5, TOWER_HEIGHT))
+        self.towers.append(Tower((SCREEN_WIDTH/6)*5, SCREEN_HEIGHT-5, TOWER_HEIGHT))
+
         self.total_discs = 6
 
-        for i in range(0, self.total_discs):
-            self.discs.append(Disc(128, 250-(8*i), (5*self.total_discs)-(i*5), 3))
-            # self.discs.append(Disc(128-75, 250-(8*i), (5*self.total_discs)-(i*5), 3))
-            # self.discs.append(Disc(128+75, 250-(8*i), (5*self.total_discs)-(i*5), 3))
-      
+        for i in range(0, self.total_discs):   
+            self.towers[0].discs.append(Disc(self.towers[0].pos.x, 246-(8*i), (5*self.total_discs)-(i*5), 3+i))      
 
         pyxel.run(self.update, self.draw)
 
@@ -71,15 +91,42 @@ class App:
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
 
-        for i in range(0, self.total_discs):
-            if(self.discs[i].update()): print("clicou no " + str(i))
+        self.towers[0].update()
+        self.towers[1].update()
+        self.towers[2].update()
+
+        for i in range(0, 3):
+            if self.towers[i].discs != []:
+                disc = self.towers[i].discs[-1]
+                if disc.update() == 1:
+                    if  col_tower_disc(self.towers[0].pos.x, disc.pos.x, disc.pos.y, disc.weight):
+                        print("Torre 0!!!")
+                    elif col_tower_disc(self.towers[1].pos.x, disc.pos.x, disc.pos.y, disc.weight):
+                        print("Torre 1!!!")
+                    elif col_tower_disc(self.towers[2].pos.x, disc.pos.x, disc.pos.y, disc.weight):
+                        print("Torre 2!!!")
+                    else:
+                        self.towers[i].discs[-1].pos.x = self.towers[i].discs[-1].last_pos.x
+                        self.towers[i].discs[-1].pos.y = self.towers[i].discs[-1].last_pos.y
+
+                # check col with one of the towers
+                    # col happened
+                    # last pos = pos
+                    # tower X add another disc IF disc is smaller than top
+
+
 
     def draw(self):
         pyxel.cls(0)
 
+        self.towers[0].draw()
+        self.towers[1].draw()
+        self.towers[2].draw()
 
-        for i in range(0, self.total_discs):
-            self.discs[i].draw()
+        for disc in self.towers[0].discs:
+            disc.draw()
 
+        # for i in range(0, self.total_discs):
+        #     self.discs[i].draw()
 
 App()
