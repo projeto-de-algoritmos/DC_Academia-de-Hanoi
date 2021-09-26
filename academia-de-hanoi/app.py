@@ -6,8 +6,6 @@ SCREEN_HEIGHT = 256
 DISC_HEIGHT = 7
 TOWER_HEIGHT = 50
 
-# is_dragging = None
-
 def col_mouse_disc(mx, my, x, y, w):
     if (x+w > mx > x) and (y+DISC_HEIGHT > my > y):
         return True
@@ -46,22 +44,16 @@ class Disc:
         self.dragging = False
 
     def update(self):
-        
-        # global is_dragging
 
         col_flag = 0
         if pyxel.btn(pyxel.MOUSE_LEFT_BUTTON):
             if col_mouse_disc(pyxel.mouse_x, pyxel.mouse_y, self.pos.x-self.weight-4, self.pos.y-3, self.weight*2+8):
-                if not self.dragging: # and not is_dragging:
+                if not self.dragging:
                     self.dragging = True
-                    # is_dragging = True
                     self.last_pos.x = self.pos.x
                     self.last_pos.y = self.pos.y
         else:
-            # print(self.dragging)
-            # print(is_dragging)
-            if self.dragging: # and is_dragging:
-                # is_dragging = False
+            if self.dragging: 
                 self.dragging = False
                 col_flag = 1 
 
@@ -75,6 +67,17 @@ class Disc:
         pyxel.circ(self.pos.x-self.weight, self.pos.y, (DISC_HEIGHT/2), self.color)
         pyxel.circ(self.pos.x+self.weight, self.pos.y, (DISC_HEIGHT/2), self.color)
         pyxel.rect(self.pos.x-self.weight, self.pos.y-(DISC_HEIGHT/2)+1, self.weight*2, DISC_HEIGHT, self.color)
+
+def transfer_disc(t_out: Tower, t_in: Tower):
+    restore_pos = True
+    
+    if t_in.discs == [] or t_in.discs[-1].weight > t_out.discs[-1].weight:
+        t_out.discs[-1].pos.x = t_in.pos.x
+        t_out.discs[-1].pos.y = 246-(8*len(t_in.discs))
+        t_in.discs.append(t_out.discs.pop())
+        restore_pos = False
+
+    return restore_pos
 
 class App:
     def __init__(self):
@@ -108,36 +111,16 @@ class App:
                 if tower.update() == 1:
                     restore_pos = True
                     disc = tower.discs[-1]
-                    if  col_tower_disc(self.towers[0].pos.x, disc.pos.x, disc.pos.y, disc.weight):
-                        # print("Disco na Torre 0")
-                        if self.towers[0].discs == [] or self.towers[0].discs[-1].weight > disc.weight:
-                            restore_pos = False
-                            tower.discs[-1].pos.x = self.towers[0].pos.x
-                            tower.discs[-1].pos.y = 246-(8*len(self.towers[0].discs))
-                            self.towers[0].discs.append(tower.discs.pop())
+                    if   col_tower_disc(self.towers[0].pos.x, disc.pos.x, disc.pos.y, disc.weight):
+                        restore_pos = transfer_disc(tower, self.towers[0])
                     elif col_tower_disc(self.towers[1].pos.x, disc.pos.x, disc.pos.y, disc.weight):
-                        # print("Disco na Torre 1")
-                        if self.towers[1].discs == [] or self.towers[1].discs[-1].weight > disc.weight:
-                            restore_pos = False
-                            tower.discs[-1].pos.x = self.towers[1].pos.x
-                            tower.discs[-1].pos.y = 246-(8*len(self.towers[1].discs))
-                            self.towers[1].discs.append(tower.discs.pop())
+                        restore_pos = transfer_disc(tower, self.towers[1])                  
                     elif col_tower_disc(self.towers[2].pos.x, disc.pos.x, disc.pos.y, disc.weight):
-                        # print("Disco na Torre 2")
-                        if self.towers[2].discs == [] or self.towers[2].discs[-1].weight > disc.weight:
-                            restore_pos = False
-                            tower.discs[-1].pos.x = self.towers[2].pos.x
-                            tower.discs[-1].pos.y = 246-(8*len(self.towers[2].discs))
-                            self.towers[2].discs.append(tower.discs.pop())
-
-                    
-                
+                        restore_pos = transfer_disc(tower, self.towers[2])                  
                 
                     if restore_pos:
                         tower.discs[-1].pos.x = tower.discs[-1].last_pos.x
                         tower.discs[-1].pos.y = tower.discs[-1].last_pos.y
-
-
 
     def draw(self):
         pyxel.cls(0)
@@ -150,6 +133,3 @@ class App:
                 disc.draw()
 
 App()
-
-# organizar o posicionamento 
-# so pode pegar um de cada vez
