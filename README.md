@@ -19,8 +19,6 @@ Academia de Hanói é um jogo baseado no puzzle Torre de Hanói. Na academia Han
 ![](https://i.imgur.com/31T6PmF.png)
 
 ## Vídeo
-[![Video](https://youtu.be/yLr2FS7FQMs)](https://youtu.be/yLr2FS7FQMs)
-
 > https://youtu.be/yLr2FS7FQMs
 
 ## Instalação 
