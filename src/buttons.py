@@ -109,4 +109,4 @@ class PushButton(Button):
         pyxel.circ(self.posx, self.posy, self.radius, 5)
         pyxel.circ(self.posx, self.posy-self.offset, self.radius, 12)
         
-        pyxel.text(align_text(self.posx, self.text), self.posy-self.offset, self.text, 7)
+        pyxel.text(align_text(self.posx+1, self.text), self.posy-self.offset-1, self.text, 7)
