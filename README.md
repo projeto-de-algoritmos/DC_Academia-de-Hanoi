@@ -13,16 +13,21 @@
 Academia de Hanói é um jogo baseado no puzzle Torre de Hanói. Na academia Hanói os discos são organizados de maneira que todos os clientes possam pegar os discos desejados sem dificuldades (ordenados de maneira decrescente, dessa forma um cliente que deseja usar um disco de 10 Kg não precisa levantar um disco de 15 Kg). Sempre que precisa mover os discos o Sr.Hanói, dono da acadêmia e um senhor de idade, sente dificuldade de reorganiza-los empilhados em ordem decrescente. O objetivo do jogo é ajudar o Sr.Hanói a mover os discos de A para C. Porém, isso pode não ser uma tarefa simples, por isso você pode ter que recorrer a uma máquina que o Sr.Hanói comprou. A máquina faz o trabalho de organização por você utilizando um algoritmo dividir e conquistar, o problema é que ela gasta muita energia elétrica e o Sr.Hanói não vai gostar nadinha de ver a conta depois.
 
 ## Screenshots
-![](https://i.imgur.com/yvQVU2W.gif)
+![](https://i.imgur.com/5swxOcB.gif)
 ![](https://i.imgur.com/51PRHOL.png)
 ![](https://i.imgur.com/K85ELmJ.png)
 ![](https://i.imgur.com/31T6PmF.png)
+
+## Vídeo
+[![Video](https://youtu.be/yLr2FS7FQMs)](https://youtu.be/yLr2FS7FQMs)
+
+> https://youtu.be/yLr2FS7FQMs
 
 ## Instalação 
 **Linguagem**: Python<br>
 **Framework**: --- <br>
 
-**Pré-requisitos** para rodar o Academia de Hanói :
+**Pré-requisitos** para rodar o Academia de Hanói:
 * Instale o [Python](https://www.python.org/downloads/) (versão 3.8.5)
 * Instale o [Pyxel](https://github.com/kitao/pyxel/blob/master/README.pt.md) (versão 1.4.3)
 
