@@ -1,18 +1,4 @@
-**!! Atenção: Renomeie o seu repositório para (Tema)_(NomeDoProjeto). !!** 
-
-Temas:
- - Grafos1
- - Grafos2
- - PD
- - D&C
- - Greed
- - Final 
- 
- **!! *Não coloque os nomes dos alunos no título do repositório*. Exemplo de título correto: Grafos2_Labirinto-do-Minotauro !!**
- 
- (Apague essa seção)
-
-# NomedoProjeto
+# Academia de Hanói
 
 **Número da Lista**: X<br>
 **Conteúdo da Disciplina**: XXXXXXXXXX<br>
@@ -30,15 +16,31 @@ Descreva os objetivos do seu projeto e como ele funciona.
 Adicione 3 ou mais screenshots do projeto em funcionamento.
 
 ## Instalação 
-**Linguagem**: xxxxxx<br>
-**Framework**: (caso exista)<br>
-Descreva os pré-requisitos para rodar o seu projeto e os comandos necessários.
+**Linguagem**: Python<br>
+**Framework**: --- <br>
+
+**Pré-requisitos** para rodar o Academia de Hanói :
+* Instale o [Python](https://www.python.org/downloads/) (versão 3.8.5)
+* Instale o [Pyxel](https://github.com/kitao/pyxel/blob/master/README.pt.md) (versão 1.4.3)
+
+Instalar e Executar (Sistema baseado em Debian)
+
+    $ pip3 install pyxel 
+    $ git clone https://github.com/projeto-de-algoritmos/DC_Academia-de-Hanoi.git
+    $ cd DC_Academia-de-Hanoi/src
+    $ python3 app.py
+
 
 ## Uso 
-Explique como usar seu projeto caso haja algum passo a passo após o comando de execução.
+Para usar o Paku-Paku siga os seguintes passos:
+* Execute a aplicação como mostrado acima
+* Opcional: Caso não faça o labirinto será gerado totalmente pelo prim, e o caminho não será mostrado
+    * Clique em Labirinto Espelhado, caso deseje um labirinto espelhado
+    * Clique em Mostrar Dijkstra, caso deseje mostrar o caminho do fantasma Blinky
+* Pressione W-A-S-D ou as setas do teclado para virar
+* Coma o máximo de bolhinhas possíveis e fuja dos fantasmas
+* Ao comer as bolhinhas especiais coma os fantasmas e ganhe pontos extras
 
-## Outros 
-Quaisquer outras informações sobre seu projeto podem ser descritas abaixo.
 
 
 
