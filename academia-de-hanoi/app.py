@@ -11,10 +11,14 @@ TOWER_HEIGHT = 50
 def col_mouse_disc(mx, my, x, y, w):
     if (x+w > mx > x) and (y+DISC_HEIGHT > my > y):
         return True
+    else:
+        return False
 
 def col_tower_disc(tx, dx, dy, dw):
     if (dx+dw > tx > dx-dw) and (dy>SCREEN_HEIGHT-TOWER_HEIGHT-10):
         return True
+    else:
+        return False
 
 class Vec:
     def __init__(self, x, y):
@@ -22,10 +26,11 @@ class Vec:
         self.y = y
 
 class Tower:
-    def __init__(self, x, y, id):
+    def __init__(self, x, y, id, name):
         self.discs = []
         self.pos = Vec(x, y)
         self.id = id
+        self.name = name
 
     def update(self):
 
@@ -35,7 +40,9 @@ class Tower:
 
     def draw(self):
         pyxel.rect(self.pos.x-1, self.pos.y-TOWER_HEIGHT, 3, TOWER_HEIGHT, 7)
-        pyxel.rect(self.pos.x-10, self.pos.y, 21, 3, 7)
+        pyxel.rect(self.pos.x-10, self.pos.y, 21, 7, 7)
+        
+        pyxel.text(self.pos.x-1, self.pos.y, self.name, 8)
 
 class Disc:
     
@@ -82,12 +89,13 @@ def transfer_disc(t_out: Tower, t_in: Tower):
 
     return restore_pos
 
-def hanoi_solve(n, source, target, auxiliary):
+def calc_hanoi_solution(n, source, target, auxiliary, solution):
+
     if n > 0:
-        hanoi_solve(n - 1, source, auxiliary, target)
-        transfer_disc(source, target)
-        print(f"Movendo disco {target.discs[-1].weight}, da Torre {source.id}, para Torre {target.id}")
-        hanoi_solve(n - 1, auxiliary, target, source)
+        calc_hanoi_solution(n - 1, source, auxiliary, target, solution)
+        # print(f"Movendo disco da Torre {source.id}, para Torre {target.id}")
+        solution.append((source.id, target.id))
+        calc_hanoi_solution(n - 1, auxiliary, target, source, solution)
     
 class App:
     def __init__(self):
@@ -101,11 +109,14 @@ class App:
         self.is_solving = False
         self.win = False
         self.timer = 0
+        self.step = 0
+        self.solution = []
+        self.minimin_moves = 2**self.total_discs - 1
 
         self.towers = [] 
-        self.towers.append(Tower(SCREEN_WIDTH/6, SCREEN_HEIGHT-5, "A"))
-        self.towers.append(Tower((SCREEN_WIDTH/2), SCREEN_HEIGHT-5,  "B"))
-        self.towers.append(Tower((SCREEN_WIDTH/6)*5, SCREEN_HEIGHT-5, "C"))
+        self.towers.append(Tower(SCREEN_WIDTH/6, SCREEN_HEIGHT-5, 0, "A"))
+        self.towers.append(Tower((SCREEN_WIDTH/2), SCREEN_HEIGHT-5,  1, "B"))
+        self.towers.append(Tower((SCREEN_WIDTH/6)*5, SCREEN_HEIGHT-5, 2, "C"))
 
         for i in range(0, self.total_discs):   
             self.towers[0].discs.append(Disc(self.towers[0].pos.x, 246-(8*i), (5*self.total_discs)-(i*5), 3+i))      
@@ -126,9 +137,19 @@ class App:
         if not self.bt_solve.is_on:
             self.bt_solve.update()
         else:
-            self.is_solving = True
-            if not self.win:
-                hanoi_solve(self.total_discs, self.towers[0], self.towers[2], self.towers[1])
+            if not self.is_solving:
+                self.is_solving = True
+                self.step = -1
+                calc_hanoi_solution(self.total_discs, self.towers[0], self.towers[2], self.towers[1], self.solution)
+            if not self.win and pyxel.frame_count%45 == 0:
+                
+                if self.step >= 0:
+                    self.moves += not transfer_disc(self.towers[self.solution[self.step][0]], self.towers[self.solution[self.step][1]])
+
+                if self.step < self.minimin_moves:
+                    self.step+=1
+            else:
+                ... # Animação
 
         if not self.is_solving and not self.win:
             self.dragging_disc = False
@@ -153,13 +174,27 @@ class App:
                             tower.discs[-1].pos.y = tower.discs[-1].last_pos.y
                         self.moves += not restore_pos
 
-
     def draw(self):
         pyxel.cls(0)
         pyxel.text(SCREEN_WIDTH-45, 10, f"MOVES: {self.moves}", 7)
         pyxel.text(5, 10, f'TIMER: {(self.timer//60):02d}:{(self.timer%60):02d}', 7)
 
-        if self.win:
+        if self.is_solving and not self.win and self.step < self.minimin_moves:
+
+            if self.step < 0:
+                step = self.step+1
+            else:
+                step = self.step
+
+            tower_out = self.towers[self.solution[step][0]]
+            tower_in  = self.towers[self.solution[step][1]]
+            text1 = f'Movendo disco de peso {tower_out.discs[-1].weight}:'
+            text2 = f'{tower_out.name} -> {tower_in.name}'
+            pyxel.text(bt.align_text(SCREEN_WIDTH/2, text1), SCREEN_HEIGHT/2, text1, 7)        
+            pyxel.text(bt.align_text(SCREEN_WIDTH/2, text2), SCREEN_HEIGHT/2+6, text2, 7)        
+
+        
+        if self.win and not self.is_solving:
             pyxel.text(bt.align_text(SCREEN_WIDTH/2,'CONGRATULATIONS :)'), SCREEN_HEIGHT/2, 'CONGRATULATIONS :)', 7)
         
         self.bt_solve.draw()
