@@ -1,19 +1,22 @@
 # Academia de Hanói
 
-**Número da Lista**: X<br>
-**Conteúdo da Disciplina**: XXXXXXXXXX<br>
+**Número da Lista**: 4<br>
+**Conteúdo da Disciplina**: D&C<br>
 
 ## Alunos
 |Matrícula | Aluno |
 | -- | -- |
-| xx/xxxxxx  |  xxxx xxxx xxxxx |
-| xx/xxxxxx  |  xxxx xxxx xxxxx |
+| 18/0113585 |  Hugo Ricardo Souza Bezerra |
+| 18/0125770  |  Lucas Gabriel Bezerra |
 
 ## Sobre 
-Descreva os objetivos do seu projeto e como ele funciona. 
+Academia de Hanói é um jogo baseado no puzzle Torre de Hanói. Na academia Hanói os discos são organizados de maneira que todos os clientes possam pegar os discos desejados sem dificuldades (ordenados de maneira decrescente, dessa forma um cliente que deseja usar um disco de 10 Kg não precisa levantar um disco de 15 Kg). Sempre que precisa mover os discos o Sr.Hanói, dono da acadêmia e um senhor de idade, sente dificuldade de reorganiza-los empilhados em ordem decrescente. O objetivo do jogo é ajudar o Sr.Hanói a mover os discos de A para C. Porém, isso pode não ser uma tarefa simples, por isso você pode ter que recorrer a uma máquina que o Sr.Hanói comprou. A máquina faz o trabalho de organização por você utilizando um algoritmo dividir e conquistar, o problema é que ela gasta muita energia elétrica e o Sr.Hanói não vai gostar nadinha de ver a conta depois.
 
 ## Screenshots
-Adicione 3 ou mais screenshots do projeto em funcionamento.
+![](https://i.imgur.com/yvQVU2W.gif)
+![](https://i.imgur.com/51PRHOL.png)
+![](https://i.imgur.com/K85ELmJ.png)
+![](https://i.imgur.com/31T6PmF.png)
 
 ## Instalação 
 **Linguagem**: Python<br>
@@ -32,16 +35,10 @@ Instalar e Executar (Sistema baseado em Debian)
 
 
 ## Uso 
-Para usar o Paku-Paku siga os seguintes passos:
+Para usar a aplicação Academia de Hanoi siga os seguintes passos:
 * Execute a aplicação como mostrado acima
-* Opcional: Caso não faça o labirinto será gerado totalmente pelo prim, e o caminho não será mostrado
-    * Clique em Labirinto Espelhado, caso deseje um labirinto espelhado
-    * Clique em Mostrar Dijkstra, caso deseje mostrar o caminho do fantasma Blinky
-* Pressione W-A-S-D ou as setas do teclado para virar
-* Coma o máximo de bolhinhas possíveis e fuja dos fantasmas
-* Ao comer as bolhinhas especiais coma os fantasmas e ganhe pontos extras
-
-
-
-
-
+* Opcional: Clique nos botões de "+" ou "-" para modificar a quantidade de discos no jogo
+* Clique no botão "Start" para iniciar o jogo
+* Clique e arraste para mover os discos no topo de uma torre e transferi-los para outra torre 
+* Tente passar todos os discos da parra a torre C
+* Caso queira ver a resposta para a solução no mínimo de movimentos possíveis clique no botão "Solve"
