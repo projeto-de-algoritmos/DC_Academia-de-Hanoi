@@ -1,6 +1,6 @@
 import pyxel
 
-from utils import Vec, TOWER_HEIGHT
+from utils import Vec, TOWER_HEIGHT, pick_color
 from disc import Disc
 
 class Tower:
@@ -11,7 +11,7 @@ class Tower:
         self.name = name
 
     def update(self):
-        """Atualiza o estado da torre"""
+        """Atualiza o estado da torre e de seus respectivos discos"""
         if self.discs != []:
             col_flag = self.discs[-1].update()
             return col_flag
@@ -32,4 +32,4 @@ class Tower:
         self.discs = []
         if self.id == 0:
             for i in range(0, n):   
-                self.discs.append(Disc(self.pos.x, 246-(8*i), (5*n)-(i*5), 3+i))
+                self.discs.append(Disc(self.pos.x, 246-(8*i), (5*n)-(i*5), pick_color(i)))

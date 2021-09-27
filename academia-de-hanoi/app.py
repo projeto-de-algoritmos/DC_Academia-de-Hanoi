@@ -1,11 +1,11 @@
 from typing import Tuple
+from math import floor
 import pyxel
 
-from utils import SCREEN_HEIGHT, SCREEN_WIDTH, calc_hanoi_solution, transfer_disc, col_tower_disc, align_text
+from utils import SCREEN_HEIGHT, SCREEN_WIDTH, TOWER_HEIGHT, SOLVE_SPEED, calc_hanoi_solution, transfer_disc, col_tower_disc, align_text
 from tower import Tower
-from disc import Disc
 import buttons as bt
-   
+
 class App:
     def __init__(self):
         pyxel.init(SCREEN_WIDTH, SCREEN_HEIGHT, caption="Academia de Hanoi")
@@ -15,17 +15,21 @@ class App:
         self.bt_minus = bt.PushButton(SCREEN_WIDTH/2-20, SCREEN_HEIGHT/2-60, "-", 5)
         self.bt_plus  = bt.PushButton(SCREEN_WIDTH/2+20, SCREEN_HEIGHT/2-60, "+", 5)
         self.bt_solve = bt.RectButton(25, 35, "Solve", 40, 15)
-        self.moves = 0
-        self.dragging_disc = True
-        self.total_discs = 5
-        self.is_solving = False
-        self.win = False
-        self.timer = 0
-        self.step = 0
-        self.solution = []
-        self.minimin_moves = 2**self.total_discs - 1
 
         self.state = "MENU"
+        self.solution = []
+        self.animation_pos = [0, 0]
+
+        self.dragging_disc = True
+        self.is_solving = False
+        self.win = False
+
+        self.timer = 0
+        self.moves = 0
+        self.step = 0
+
+        self.total_discs = 5
+        self.minimum_moves = 2**self.total_discs - 1
 
         self.towers = [] 
         self.towers.append(Tower(SCREEN_WIDTH/6, SCREEN_HEIGHT-5, 0, "A"))
@@ -52,7 +56,7 @@ class App:
                 self.bt_start.text = "Restart"
                 self.state = "GAME"
 
-                self.minimin_moves = 2**self.total_discs - 1
+                self.minimum_moves = 2**self.total_discs - 1
                 self.moves = 0
                 self.timer = 0
                 self.is_solving = False
@@ -83,7 +87,8 @@ class App:
                 
 
             if not self.bt_solve.is_on:
-                self.bt_solve.update()
+                if not self.win:
+                    self.bt_solve.update()
             else:
                 self.bt_solve.is_on = False
                 self.is_solving = True
@@ -96,18 +101,32 @@ class App:
                 for tower in self.towers:
                     tower.reset(self.total_discs)
 
+                self.animation_pos = [self.towers[0].discs[-1].pos.x, self.towers[0].discs[-1].pos.y]
+
                 calc_hanoi_solution(self.total_discs, self.towers[0], self.towers[2], self.towers[1], self.solution)
 
             if self.is_solving:
-                if not self.win and pyxel.frame_count%30 == 0:
+                if not self.win and pyxel.frame_count%SOLVE_SPEED == 0:
                     
                     if self.step >= 0:
                         self.moves += not transfer_disc(self.towers[self.solution[self.step][0]], self.towers[self.solution[self.step][1]])
 
-                    if self.step < self.minimin_moves:
+                    if self.step < self.minimum_moves:
                         self.step+=1
-                else:
-                    ... # Animação
+                elif self.moves < self.minimum_moves and self.step != -1:
+
+                    mult = pyxel.frame_count%SOLVE_SPEED
+
+                    if mult == 1:
+                        self.animation_pos = [self.towers[self.solution[self.step][0]].discs[-1].pos.x, self.towers[self.solution[self.step][0]].discs[-1].pos.y]
+                    pos_end = [self.towers[self.solution[self.step][1]].pos.x, self.towers[self.solution[self.step][1]].pos.y-TOWER_HEIGHT]
+                    d = [pos_end[0]-self.animation_pos[0], pos_end[1]-self.animation_pos[1]]
+
+                    self.towers[self.solution[self.step][0]].discs[-1].pos.x = self.animation_pos[0] + ((d[0] / (SOLVE_SPEED-1)) * mult)
+                    self.towers[self.solution[self.step][0]].discs[-1].pos.y = self.animation_pos[1] + ((d[1] / (SOLVE_SPEED-1)) * mult)
+
+                    self.towers[self.solution[self.step][0]].discs[-1].pos.x = floor(self.towers[self.solution[self.step][0]].discs[-1].pos.x)
+                    self.towers[self.solution[self.step][0]].discs[-1].pos.y = floor(self.towers[self.solution[self.step][0]].discs[-1].pos.y)
 
             if not self.is_solving and not self.win:
                 self.dragging_disc = False
@@ -146,7 +165,7 @@ class App:
             pyxel.text(SCREEN_WIDTH-45, 10, f"MOVES: {self.moves}", 7)
             pyxel.text(5, 10, f'TIMER: {(self.timer//60):02d}:{(self.timer%60):02d}', 7)
 
-            if self.is_solving and not self.win and self.step < self.minimin_moves:
+            if self.is_solving and not self.win and self.step < self.minimum_moves:
 
                 if self.step < 0:
                     step = self.step+1

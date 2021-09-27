@@ -5,6 +5,9 @@ SCREEN_HEIGHT = 256
 
 DISC_HEIGHT = 7
 TOWER_HEIGHT = 70
+SOLVE_SPEED = 5
+
+COLOR_LIST = [3, 5, 6, 8, 9, 10, 11, 12, 14, 15]
 
 class Vec:
     # Classe para posição
@@ -12,6 +15,8 @@ class Vec:
         self.x = x
         self.y = y
 
+def pick_color(id):
+    return COLOR_LIST[id%len(COLOR_LIST)]
 
 def align_text(x, str):
     """
