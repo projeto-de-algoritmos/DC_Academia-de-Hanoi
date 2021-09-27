@@ -22,9 +22,10 @@ class Vec:
         self.y = y
 
 class Tower:
-    def __init__(self, x, y):
+    def __init__(self, x, y, id):
         self.discs = []
         self.pos = Vec(x, y)
+        self.id = id
 
     def update(self):
 
@@ -81,7 +82,12 @@ def transfer_disc(t_out: Tower, t_in: Tower):
 
     return restore_pos
 
-
+def hanoi_solve(n, source, target, auxiliary):
+    if n > 0:
+        hanoi_solve(n - 1, source, auxiliary, target)
+        transfer_disc(source, target)
+        print(f"Movendo disco {target.discs[-1].weight}, da Torre {source.id}, para Torre {target.id}")
+        hanoi_solve(n - 1, auxiliary, target, source)
     
 class App:
     def __init__(self):
@@ -91,15 +97,15 @@ class App:
         self.bt_solve = bt.RectButton(25, 35, "Solve", 40, 15)
         self.moves = 0
         self.dragging_disc = True
-        self.total_discs = 5
+        self.total_discs = 3
         self.is_solving = False
         self.win = False
         self.timer = 0
 
         self.towers = [] 
-        self.towers.append(Tower(SCREEN_WIDTH/6, SCREEN_HEIGHT-5))
-        self.towers.append(Tower((SCREEN_WIDTH/2), SCREEN_HEIGHT-5))
-        self.towers.append(Tower((SCREEN_WIDTH/6)*5, SCREEN_HEIGHT-5))
+        self.towers.append(Tower(SCREEN_WIDTH/6, SCREEN_HEIGHT-5, "A"))
+        self.towers.append(Tower((SCREEN_WIDTH/2), SCREEN_HEIGHT-5,  "B"))
+        self.towers.append(Tower((SCREEN_WIDTH/6)*5, SCREEN_HEIGHT-5, "C"))
 
         for i in range(0, self.total_discs):   
             self.towers[0].discs.append(Disc(self.towers[0].pos.x, 246-(8*i), (5*self.total_discs)-(i*5), 3+i))      
@@ -113,14 +119,16 @@ class App:
         if not self.win:
             if pyxel.frame_count % 30 == 0:
                 self.timer += 1
+
+        if len(self.towers[2].discs) == self.total_discs:
+            self.win = True
+
         if not self.bt_solve.is_on:
             self.bt_solve.update()
         else:
             self.is_solving = True
-            # hannoi_solve()
-
-        if len(self.towers[2].discs) == self.total_discs:
-            self.win = True
+            if not self.win:
+                hanoi_solve(self.total_discs, self.towers[0], self.towers[2], self.towers[1])
 
         if not self.is_solving and not self.win:
             self.dragging_disc = False
@@ -150,12 +158,12 @@ class App:
         pyxel.cls(0)
         pyxel.text(SCREEN_WIDTH-45, 10, f"MOVES: {self.moves}", 7)
         pyxel.text(5, 10, f'TIMER: {(self.timer//60):02d}:{(self.timer%60):02d}', 7)
+
+        if self.win:
+            pyxel.text(bt.align_text(SCREEN_WIDTH/2,'CONGRATULATIONS :)'), SCREEN_HEIGHT/2, 'CONGRATULATIONS :)', 7)
         
         self.bt_solve.draw()
 
-        if self.win:
-            pyxel.text(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 'CONGRATULATIONS :)', 7)
-        
         for tower in self.towers:
             tower.draw()
 
