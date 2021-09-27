@@ -79,8 +79,8 @@ class RectButton(Button):
         
 
     def draw(self):
-        pyxel.rect(self.posx-(self.width/2), self.posy-(self.height/2), self.width, self.height, 5)
-        pyxel.rect(self.posx-(self.width/2), self.posy-(self.height/2)-self.offset, self.width, self.height, 12)
+        pyxel.rect(self.posx-(self.width/2)-self.offset, self.posy-(self.height/2)-self.offset, self.width+self.offset, self.height+self.offset, 5)
+        pyxel.rect(self.posx-(self.width/2)-self.offset, self.posy-(self.height/2)-self.offset, self.width, self.height, 12)
 
         if self.is_on: txt_color = 8
         else: txt_color = 7
@@ -99,9 +99,11 @@ class PushButton(Button):
 
         if pyxel.btn(pyxel.MOUSE_LEFT_BUTTON) and  (dist(mouse_pos, bpos) < self.radius):
             self.offset = 0
-        if pyxel.btnr(pyxel.MOUSE_LEFT_BUTTON) and  (dist(mouse_pos, bpos) < self.radius):
+        elif pyxel.btnr(pyxel.MOUSE_LEFT_BUTTON) and  (dist(mouse_pos, bpos) < self.radius):
             self.offset = 2
             return True
+        else:
+            self.offset = 2
 
     def draw(self):
         pyxel.circ(self.posx, self.posy, self.radius, 5)

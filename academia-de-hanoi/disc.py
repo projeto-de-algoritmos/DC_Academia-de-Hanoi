@@ -1,6 +1,6 @@
 import pyxel
 
-from utils import Vec, col_mouse_disc, DISC_HEIGHT
+from utils import Vec, align_text, col_mouse_disc, DISC_HEIGHT
 
 class Disc: 
     def __init__(self, x, y, w, color):
@@ -34,3 +34,4 @@ class Disc:
         pyxel.circ(self.pos.x-self.weight, self.pos.y, (DISC_HEIGHT/2), self.color)
         pyxel.circ(self.pos.x+self.weight, self.pos.y, (DISC_HEIGHT/2), self.color)
         pyxel.rect(self.pos.x-self.weight, self.pos.y-(DISC_HEIGHT/2)+1, self.weight*2, DISC_HEIGHT, self.color)
+        pyxel.text(align_text(self.pos.x, str(self.weight)), self.pos.y-2, str(self.weight), 0)

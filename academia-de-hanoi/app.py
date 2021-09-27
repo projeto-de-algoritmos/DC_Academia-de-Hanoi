@@ -14,7 +14,7 @@ class App:
         self.bt_start = bt.CircleButton(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, "Start!", 25)
         self.bt_minus = bt.PushButton(SCREEN_WIDTH/2-20, SCREEN_HEIGHT/2-60, "-", 5)
         self.bt_plus  = bt.PushButton(SCREEN_WIDTH/2+20, SCREEN_HEIGHT/2-60, "+", 5)
-        self.bt_solve = bt.RectButton(25, 35, "Solve", 40, 15)
+        self.bt_solve = bt.RectButton(230, 35, "Solve", 40, 15)
 
         self.state = "MENU"
         self.solution = []
@@ -87,7 +87,7 @@ class App:
                 
 
             if not self.bt_solve.is_on:
-                if not self.win:
+                if not self.win and not self.is_solving:
                     self.bt_solve.update()
             else:
                 self.bt_solve.is_on = False
@@ -156,11 +156,27 @@ class App:
 
         if self.state == "MENU":
             self.bt_start.draw()
-            pyxel.text(align_text(SCREEN_WIDTH/2, "Discs"), SCREEN_HEIGHT/2-80, "Discs", 7)
+            pyxel.text(align_text(SCREEN_WIDTH/2, "DISCS"), SCREEN_HEIGHT/2-80, "DISCS", 7)
             self.bt_plus.draw()
             pyxel.text(align_text(SCREEN_WIDTH/2, f"{self.total_discs}"), SCREEN_HEIGHT/2-60, f"{self.total_discs}", 7)
-            
             self.bt_minus.draw()
+
+            prompt = "Transfer all weights from A to C following 2 rules:"
+            rule1a = "1: You can only move (drag and drop) the"
+            rule1b = "disc on top of a tower"
+            rule2a = "2: You can only put a weight on top of a"
+            rule2b = "lighter weight"
+
+            pyxel.text(align_text(SCREEN_WIDTH/2, prompt), SCREEN_HEIGHT/2+60, prompt, 7)
+
+            pyxel.circ(34, SCREEN_HEIGHT/2+77, 2, 8)
+            pyxel.text(40, SCREEN_HEIGHT/2+75, rule1a, 7)
+            pyxel.text(40, SCREEN_HEIGHT/2+85, rule1b, 7)
+
+            pyxel.circ(34, SCREEN_HEIGHT/2+97, 2, 8)
+            pyxel.text(40, SCREEN_HEIGHT/2+95, rule2a, 7)
+            pyxel.text(40, SCREEN_HEIGHT/2+105, rule2b, 7)
+            
         elif self.state == "GAME":
             pyxel.text(SCREEN_WIDTH-45, 10, f"MOVES: {self.moves}", 7)
             pyxel.text(5, 10, f'TIMER: {(self.timer//60):02d}:{(self.timer%60):02d}', 7)

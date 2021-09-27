@@ -5,9 +5,9 @@ SCREEN_HEIGHT = 256
 
 DISC_HEIGHT = 7
 TOWER_HEIGHT = 70
-SOLVE_SPEED = 5
+SOLVE_SPEED = 35
 
-COLOR_LIST = [3, 5, 6, 8, 9, 10, 11, 12, 14, 15]
+COLOR_LIST = [2, 5, 12, 3, 10, 9, 8,]
 
 class Vec:
     # Classe para posição
