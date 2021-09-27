@@ -1,5 +1,7 @@
 import pyxel
 
+import buttons as bt
+
 SCREEN_WIDTH = 256
 SCREEN_HEIGHT = 256
 
@@ -79,13 +81,20 @@ def transfer_disc(t_out: Tower, t_in: Tower):
 
     return restore_pos
 
+
+    
 class App:
     def __init__(self):
         pyxel.init(SCREEN_WIDTH, SCREEN_HEIGHT, caption="Academia de Hanoi")
         pyxel.mouse(True)
 
+        self.bt_solve = bt.RectButton(25, 35, "Solve", 40, 15)
+        self.moves = 0
         self.dragging_disc = True
-        self.total_discs = 6
+        self.total_discs = 5
+        self.is_solving = False
+        self.win = False
+        self.timer = 0
 
         self.towers = [] 
         self.towers.append(Tower(SCREEN_WIDTH/6, SCREEN_HEIGHT-5))
@@ -101,30 +110,52 @@ class App:
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
 
-        self.dragging_disc = False
-        for tower in self.towers:
-            if tower.discs != [] and tower.discs[-1].dragging:
-                self.dragging_disc = True
+        if not self.win:
+            if pyxel.frame_count % 30 == 0:
+                self.timer += 1
+        if not self.bt_solve.is_on:
+            self.bt_solve.update()
+        else:
+            self.is_solving = True
+            # hannoi_solve()
 
-        for tower in self.towers:
-            if self.dragging_disc == False or tower.discs != [] and tower.discs[-1].dragging:
-                if tower.update() == 1:
-                    restore_pos = True
-                    disc = tower.discs[-1]
-                    if   col_tower_disc(self.towers[0].pos.x, disc.pos.x, disc.pos.y, disc.weight):
-                        restore_pos = transfer_disc(tower, self.towers[0])
-                    elif col_tower_disc(self.towers[1].pos.x, disc.pos.x, disc.pos.y, disc.weight):
-                        restore_pos = transfer_disc(tower, self.towers[1])                  
-                    elif col_tower_disc(self.towers[2].pos.x, disc.pos.x, disc.pos.y, disc.weight):
-                        restore_pos = transfer_disc(tower, self.towers[2])                  
-                
-                    if restore_pos:
-                        tower.discs[-1].pos.x = tower.discs[-1].last_pos.x
-                        tower.discs[-1].pos.y = tower.discs[-1].last_pos.y
+        if len(self.towers[2].discs) == self.total_discs:
+            self.win = True
+
+        if not self.is_solving and not self.win:
+            self.dragging_disc = False
+            for tower in self.towers:
+                if tower.discs != [] and tower.discs[-1].dragging:
+                    self.dragging_disc = True
+
+            for tower in self.towers:
+                if self.dragging_disc == False or tower.discs != [] and tower.discs[-1].dragging:
+                    if tower.update() == 1:
+                        restore_pos = True
+                        disc = tower.discs[-1]
+                        if   col_tower_disc(self.towers[0].pos.x, disc.pos.x, disc.pos.y, disc.weight):
+                            restore_pos = transfer_disc(tower, self.towers[0])
+                        elif col_tower_disc(self.towers[1].pos.x, disc.pos.x, disc.pos.y, disc.weight):
+                            restore_pos = transfer_disc(tower, self.towers[1])                  
+                        elif col_tower_disc(self.towers[2].pos.x, disc.pos.x, disc.pos.y, disc.weight):
+                            restore_pos = transfer_disc(tower, self.towers[2])                  
+                    
+                        if restore_pos:
+                            tower.discs[-1].pos.x = tower.discs[-1].last_pos.x
+                            tower.discs[-1].pos.y = tower.discs[-1].last_pos.y
+                        self.moves += not restore_pos
+
 
     def draw(self):
         pyxel.cls(0)
+        pyxel.text(SCREEN_WIDTH-45, 10, f"MOVES: {self.moves}", 7)
+        pyxel.text(5, 10, f'TIMER: {(self.timer//60):02d}:{(self.timer%60):02d}', 7)
+        
+        self.bt_solve.draw()
 
+        if self.win:
+            pyxel.text(SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 'CONGRATULATIONS :)', 7)
+        
         for tower in self.towers:
             tower.draw()
 
